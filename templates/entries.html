@@ -156,17 +156,21 @@
             });
         }
 
-        // Copy all entries to the textarea and select for copying
+        // Copy all entries to the clipboard
         function copyEntries() {
             const entriesListElement = document.getElementById('entries-list');
             const entries = Array.from(entriesListElement.children).map(entry => entry.textContent.split('. ')[1]);
             const entriesText = entries.join('\n');
 
-            const entriesTextarea = document.getElementById('entries-textarea');
-            entriesTextarea.value = entriesText;
-            entriesTextarea.select();
-            document.execCommand('copy');
-            alert('Entries copied to clipboard!');
+            // Use the modern Clipboard API
+            navigator.clipboard.writeText(entriesText)
+                .then(() => {
+                    alert('Entries copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy entries. Please try again.');
+                });
         }
     </script>
 </body>
