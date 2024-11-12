@@ -137,7 +137,7 @@ def get_ticket_entries():
 def schedule_data_fetch():
     log_message('info', 'Fetching data every 1.5 minutes.')
     fetch_data()  # Fetch data immediately when the script starts
-    threading.Timer(90, schedule_data_fetch).start()  # Schedule the next fetch in 1.5 minutes
+    threading.Timer(120, schedule_data_fetch).start()  # Schedule the next fetch in 2 minutes
 
 # Flask route to serve the cached data
 @app.route("/data")
