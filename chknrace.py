@@ -129,7 +129,12 @@ def schedule_data_fetch():
 @app.route("/data")
 def get_data():
     log_message('info', 'Serving cached data to a client')
-    return jsonify(data_cache)
+    # Generate list of participants with each ticket represented individually
+    ticket_list = []
+    if "top_wagerers" in data_cache:
+        for wagerer in data_cache["top_wagerers"].values():
+            ticket_list.extend([wagerer["username"]] * int(wagerer["tickets"].replace(",", "")))
+    return jsonify(ticket_list)
 
 # Route to serve the index.html template
 @app.route("/")
@@ -148,22 +153,6 @@ def serve_drawraffle():
 def page_not_found(e):
     log_message('warning', '404 error: Page not found.')
     return render_template('404.html'), 404
-
-# Route to draw a winner
-@app.route('/draw_winner', methods=['GET'])
-def draw_winner():
-    if not tickets:
-        return jsonify({'winner': None})
-    # Use a cryptographic random number generator to select the winner
-    winner_index = secrets.randbelow(len(tickets))
-    return jsonify({'winner': tickets[winner_index]})
-
-# Route to get all participant names
-@app.route('/get_all_names', methods=['GET'])
-def get_all_names():
-    # Return a list of all participant names, removing duplicates
-    unique_names = list(set(tickets))
-    return jsonify({'names': unique_names})
 
 # Start the data fetching thread
 schedule_data_fetch()
