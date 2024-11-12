@@ -5,7 +5,7 @@ from flask import Flask, jsonify, render_template
 from datetime import datetime
 import os
 import threading
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import random
 
 # Initialize Flask app
@@ -118,6 +118,7 @@ def update_placeholder_data():
 
 # Route to serve the ticket entries page
 @app.route("/entries")
+@cross_origin()
 def get_ticket_entries():
     log_message('info', 'Generating ticket entries list.')
     try:
@@ -126,8 +127,10 @@ def get_ticket_entries():
             for user in data_cache['top_wagerers'].values():
                 tickets = int(user['tickets'].replace(',', ''))
                 ticket_entries.extend([user['username']] * tickets)
+            log_message('debug', f"Ticket entries being returned: {ticket_entries}")  # Log ticket entries
             return render_template('entries.html', entries=ticket_entries)
         else:
+            log_message('warning', 'No ticket data available.')
             return render_template('entries.html', entries=[])
     except Exception as e:
         log_message('error', f"Exception occurred while generating ticket entries: {e}")
@@ -137,7 +140,7 @@ def get_ticket_entries():
 def schedule_data_fetch():
     log_message('info', 'Fetching data every 1.5 minutes.')
     fetch_data()  # Fetch data immediately when the script starts
-    threading.Timer(120, schedule_data_fetch).start()  # Schedule the next fetch in 2 minutes
+    threading.Timer(90, schedule_data_fetch).start()  # Schedule the next fetch in 1.5 minutes
 
 # Flask route to serve the cached data
 @app.route("/data")
