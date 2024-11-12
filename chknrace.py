@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 import threading
 from flask_cors import CORS
+import secrets
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -22,6 +23,9 @@ start_time = 1731312060  # Nov. 11 00:01 Pacific Time, 2024, in seconds
 
 # Data cache for storing fetched data
 data_cache = {}
+
+# Sample data representing the tickets held by participants
+tickets = ["Alice", "Bob", "Charlie", "Dave"]
 
 # Function to log detailed output
 def log_message(level, message):
@@ -138,6 +142,22 @@ def serve_index():
 def page_not_found(e):
     log_message('warning', '404 error: Page not found.')
     return render_template('404.html'), 404
+
+# Route to draw a winner
+@app.route('/draw_winner', methods=['GET'])
+def draw_winner():
+    if not tickets:
+        return jsonify({'winner': None})
+    # Use a cryptographic random number generator to select the winner
+    winner_index = secrets.randbelow(len(tickets))
+    return jsonify({'winner': tickets[winner_index]})
+
+# Route to get all participant names
+@app.route('/get_all_names', methods=['GET'])
+def get_all_names():
+    # Return a list of all participant names, removing duplicates
+    unique_names = list(set(tickets))
+    return jsonify({'names': unique_names})
 
 # Start the data fetching thread
 schedule_data_fetch()
