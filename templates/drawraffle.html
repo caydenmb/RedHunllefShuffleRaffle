@@ -80,6 +80,26 @@
             height: 200px;
             overflow-y: auto;
             white-space: pre-wrap;
+            position: relative;
+        }
+
+        #copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff2d2d;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #copy-button:hover {
+            background-color: #cc2424;
+            transform: translateY(-2px);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -92,7 +112,10 @@
         <p>Click the button below to generate a copyable list of participants, with each user's name repeated according to their ticket count. You can also randomize the list for added fairness.</p>
         <button class="button" onclick="exportParticipants()">Export Participants</button>
         <button class="button" onclick="randomizeParticipants()">Randomize List</button>
-        <div id="output">No data generated yet.</div>
+        <div id="output">
+            No data generated yet.
+            <button id="copy-button" onclick="copyToClipboard()" style="display: none;">Copy</button>
+        </div>
     </div>
 
     <script>
@@ -111,6 +134,7 @@
                         }
                     }
                     document.getElementById('output').textContent = participants.join('\n');
+                    document.getElementById('copy-button').style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error fetching participant data:', error);
@@ -128,6 +152,16 @@
                 [participants[i], participants[j]] = [participants[j], participants[i]];
             }
             document.getElementById('output').textContent = participants.join('\n');
+        }
+
+        function copyToClipboard() {
+            const outputElement = document.getElementById('output');
+            const textToCopy = outputElement.textContent;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Error copying to clipboard:', err);
+            });
         }
     </script>
 </body>
