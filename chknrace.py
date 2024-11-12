@@ -11,14 +11,12 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Shuffle.com API key
-api_key = "f45f746d-b021-494d-b9b6-b47628ee5cc9"  # Shuffle.com API key
+# Shuffle.com API key and base URL template
+API_KEY = "f45f746d-b021-494d-b9b6-b47628ee5cc9"
+URL_TEMPLATE = f"https://affiliate.shuffle.com/stats/{API_KEY}?startTime={{start_time}}&endTime={{end_time}}"
 
-# Base URL for Shuffle.com API with placeholders for startTime and endTime
-url_template = f"https://affiliate.shuffle.com/stats/{api_key}?startTime={{start_time}}&endTime={{end_time}}"
-
-# Define start_time as a fixed epoch value and end_time as dynamic
-start_time = 1731312060  # Nov. 11 00:01 Pacific Time, 2024, in seconds
+# Define start_time as a fixed epoch value
+START_TIME = 1731312060  # Nov. 11 00:01 Pacific Time, 2024, in seconds
 
 # Data cache for storing fetched data
 data_cache = {}
@@ -39,16 +37,15 @@ def fetch_data():
         log_message('debug', f"Current end_time: {end_time} (current time - 15 seconds)")
 
         # Format the API URL with dynamic time parameters
-        url = url_template.format(start_time=start_time, end_time=end_time)
+        url = URL_TEMPLATE.format(start_time=START_TIME, end_time=end_time)
         log_message('debug', f"Fetching from URL: {url}")
 
         # Fetch the data from Shuffle.com API
         response = requests.get(url)
 
-        # If date-based fetch fails, fall back to fetching lifetime data
         if response.status_code == 400 and "INVALID_DATE" in response.text:
             log_message('warning', 'Invalid date range, fetching lifetime data instead.')
-            url = f"https://affiliate.shuffle.com/stats/{api_key}"
+            url = f"https://affiliate.shuffle.com/stats/{API_KEY}"
             response = requests.get(url)
 
         log_message('debug', f"Received status code: {response.status_code}")
@@ -92,17 +89,17 @@ def update_placeholder_data():
             total_tickets = 0
 
             # Replace placeholder data with the top wagerers
-            top_wagerers = {}
-            for i in range(min(11, len(sorted_data))):  # Get up to the top 11 players
-                wager_amount = sorted_data[i]['wagerAmount']
-                tickets = int(wager_amount // 250)  # Calculate tickets as a whole number
-                total_tickets += tickets  # Add to the total tickets
-
-                top_wagerers[f'top{i+1}'] = {
-                    'username': sorted_data[i]['username'],
-                    'wager': f"${wager_amount:,.2f}",
-                    'tickets': f"{tickets:,}"  # Format tickets with commas, no decimal
+            top_wagerers = {
+                f'top{i+1}': {
+                    'username': entry['username'],
+                    'wager': f"${entry['wagerAmount']:,.2f}",
+                    'tickets': f"{int(entry['wagerAmount'] // 250):,}"
                 }
+                for i, entry in enumerate(sorted_data[:11])
+            }
+
+            # Calculate total tickets
+            total_tickets = sum(int(entry['wagerAmount'] // 250) for entry in sorted_data[:11])
 
             # Update the global data_cache with top wagerers and total tickets
             data_cache = {"top_wagerers": top_wagerers, "total_tickets": f"{total_tickets:,}"}
@@ -115,7 +112,7 @@ def update_placeholder_data():
     except Exception as e:
         log_message('error', f"An error occurred while updating placeholder data: {e}")
 
-# Schedule data fetching every 5 minutes
+# Schedule data fetching every 1.5 minutes
 def schedule_data_fetch():
     log_message('info', 'Fetching data every 1.5 minutes.')
     fetch_data()  # Fetch data immediately when the script starts

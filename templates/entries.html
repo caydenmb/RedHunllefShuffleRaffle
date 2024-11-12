@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Entries List</title>
 
+    <!-- Favicon (Logo) -->
+    <link rel="icon" href="/static/redlogo.png" type="image/png">
+
     <!-- Google Fonts (Roboto for sleek typography) -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
@@ -24,13 +27,13 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            height: 100vh;
-            overflow: hidden; /* Prevent page from scrolling */
+            min-height: 100vh;
         }
 
         h1 {
             margin-bottom: 20px;
-            color: #ff2d2d;
+            color: #53fc18;
+            font-size: 2.5rem;
         }
 
         #entries-list {
@@ -42,7 +45,7 @@
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
             overflow-y: auto;
-            max-height: 70vh; /* Default max-height to fit most screens */
+            max-height: 70vh;
         }
 
         .buttons-container {
@@ -52,29 +55,39 @@
         }
 
         .button {
-            padding: 10px 20px;
-            background-color: #ff2d2d;
-            color: #fff;
-            font-weight: bold;
+            padding: 12px 25px;
+            background-color: #53fc18;
+            color: black;
             text-decoration: none;
+            font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+            font-size: 1.1rem;
         }
 
         .button:hover {
-            background-color: #cc2424;
+            background-color: #44d114;
             transform: translateY(-3px);
-            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
         }
 
         .button:active {
             transform: translateY(-1px);
-            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
         }
 
         #entries-textarea {
-            display: none; /* Hide the white box at the bottom */
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -95,7 +108,7 @@
         function adjustEntriesListHeight() {
             const headerHeight = document.querySelector('h1').offsetHeight;
             const buttonsHeight = document.querySelector('.buttons-container').offsetHeight;
-            const padding = 60; // Additional padding for spacing
+            const padding = 60;
             const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding;
             document.getElementById('entries-list').style.maxHeight = `${availableHeight}px`;
         }
@@ -118,7 +131,6 @@
                     if (data && data.top_wagerers) {
                         let entries = [];
 
-                        // Iterate over top wagerers and add their names based on ticket count
                         Object.values(data.top_wagerers).forEach(user => {
                             const ticketCount = parseInt(user.tickets.replace(/,/g, ''));
                             for (let i = 0; i < ticketCount; i++) {
@@ -126,7 +138,6 @@
                             }
                         });
 
-                        // Populate entries list
                         entries.forEach((entry, index) => {
                             const entryDiv = document.createElement('div');
                             entryDiv.textContent = `${index + 1}. ${entry}`;
@@ -142,13 +153,11 @@
             const entriesListElement = document.getElementById('entries-list');
             const entries = Array.from(entriesListElement.children);
 
-            // Shuffle the entries array
             for (let i = entries.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [entries[i], entries[j]] = [entries[j], entries[i]];
             }
 
-            // Clear current entries and append shuffled ones
             entriesListElement.innerHTML = '';
             entries.forEach((entry, index) => {
                 entry.textContent = `${index + 1}. ${entry.textContent.split('. ')[1]}`;
@@ -162,7 +171,6 @@
             const entries = Array.from(entriesListElement.children).map(entry => entry.textContent.split('. ')[1]);
             const entriesText = entries.join('\n');
 
-            // Use the modern Clipboard API
             navigator.clipboard.writeText(entriesText)
                 .then(() => {
                     alert('Entries copied to clipboard!');

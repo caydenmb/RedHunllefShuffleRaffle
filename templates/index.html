@@ -29,9 +29,7 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            overflow-y: auto;
             padding: 15px;
-            position: relative;
         }
 
         .container {
@@ -46,7 +44,7 @@
             width: 225px;
             height: auto;
             animation: bounce 0.6s infinite ease-in-out;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         @keyframes bounce {
@@ -60,19 +58,20 @@
 
         #sponsor-message {
             font-size: 1.1rem;
-            color: #ff2d2d; /* Brighter color to stand out */
-            margin-bottom: 20px; /* Increased space between message and buttons */
+            color: #ff2d2d;
+            margin-bottom: 15px;
             font-weight: bold;
         }
 
         .button-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
+            margin-bottom: 30px;
         }
 
         .button {
-            padding: 17px 44px;
+            padding: 15px 40px;
             background-color: #ff2d2d;
             color: #fff;
             font-weight: bold;
@@ -84,33 +83,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for hover effects */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .button:hover {
             background-color: #cc2424;
-            transform: translateY(-3px); /* Slight raise on hover */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Shadow effect for raised appearance */
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .wager-container {
-            margin-top: 50px;
+            margin-top: 30px;
             width: 100%;
             text-align: center;
         }
 
         .wager-title {
             font-size: 2rem;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
-        /* Podium style for top 3 */
         .podium {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 40px;
-            margin-bottom: 40px;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
         .medal {
@@ -120,7 +118,7 @@
         }
 
         .first-medal {
-            width: 112px; /* 50% larger for 1st place */
+            width: 112px;
         }
 
         .podium div {
@@ -134,15 +132,13 @@
             font-weight: bold;
             color: #fff;
             background-color: #444;
-            box-sizing: border-box;
-            font-size: 107%; /* Increased font size by 7% for podium places */
+            font-size: 1.1rem;
         }
 
         .podium div h3 {
-            margin-bottom: 10px; /* Small spacer between username and wager */
+            margin-bottom: 8px;
         }
 
-        /* Styling for podium heights */
         .first {
             background-color: gold;
             height: 270px;
@@ -170,9 +166,9 @@
         .other-standings {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 38px;
+            gap: 30px;
             justify-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
 
         .standing {
@@ -180,15 +176,15 @@
             padding: 10px;
             border-radius: 10px;
             text-align: center;
-            width: 180px; /* Fixed width */
-            height: 120px; /* Fixed height */
+            width: 180px;
+            height: 120px;
             font-size: 1rem;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            overflow-wrap: break-word; /* Ensure long text wraps inside the box */
+            overflow-wrap: break-word;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center text vertically */
-            align-items: center; /* Center text horizontally */
+            justify-content: center;
+            align-items: center;
         }
 
         .standing h3 {
@@ -198,17 +194,10 @@
             font-weight: bold;
         }
 
-        .standing p {
-            font-size: 1rem;
-            margin: 0;
-            color: #fff;
-        }
-
         .total-tickets-container {
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 1.2rem;
             color: #ff2d2d;
-            text-align: center;
         }
 
         .search-container {
@@ -252,16 +241,10 @@
             font-weight: bold;
         }
 
-        /* Footer styling, including built-by reference */
         footer {
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 0.8rem;
             color: #888;
-            text-align: center;
-        }
-
-        footer p {
-            margin: 5px 0;
         }
 
         footer a {
@@ -276,9 +259,9 @@
         @media (max-width: 768px) {
             header img { width: 180px; }
             .button-container { flex-direction: column; gap: 15px; }
-            .button { font-size: 1.3rem; padding: 16px 42px; max-width: 100%; }
+            .button { font-size: 1.3rem; padding: 14px 38px; }
             .podium div { width: 150px; }
-            .other-standings { grid-template-columns: repeat(2, 1fr); }
+            .other-standings { grid-template-columns: repeat(2, 1fr); gap: 20px; }
         }
 
         #stars {
@@ -288,7 +271,6 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            overflow: hidden;
         }
 
         .stars-overlay {
@@ -297,7 +279,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            min-height: 100vh;
             pointer-events: none;
         }
 
@@ -311,7 +292,6 @@
     </style>
 </head>
 <body>
-
     <div id="stars">
         <div class="stars-overlay"></div>
     </div>
@@ -337,11 +317,11 @@
         <div class="wager-container">
             <h4 class="wager-title">Shuffle.com Raffle Race</h4>
             <p style="font-size: 1.2rem; margin-bottom: 15px;">Raffle Race Ends November 20th!</p>
-        
+            
             <div class="podium" id="top-3-standings">
                 <!-- Top 3 players will be dynamically inserted here -->
             </div>
-        
+            
             <div class="other-standings" id="wager-standings">
                 <!-- 4th to 11th place players will be dynamically inserted here -->
             </div>
@@ -361,7 +341,6 @@
             <p>&copy; 2024 Redhunllef Livestream. All Rights Reserved.</p>
             <p>Built by <a href="https://kick.com/gingrsnaps" target="_blank">GingrSnaps</a></p>
         </footer>
-
     </div>
 
     <script>
@@ -382,9 +361,9 @@
                     totalTicketsElement.textContent = data.total_tickets || '0';
 
                     const top3 = [
-                        { place: '1st', username: data.top_wagerers.top1?.username || placeholderData.top1.username, wager: data.top_wagerers.top1?.wager || placeholderData.top1.wager, tickets: data.top_wagerers.top1?.tickets || '0', medal: '/static/1st.png' },
-                        { place: '2nd', username: data.top_wagerers.top2?.username || placeholderData.top2.username, wager: data.top_wagerers.top2?.wager || placeholderData.top2.wager, tickets: data.top_wagerers.top2?.tickets || '0', medal: '/static/2nd.png' },
-                        { place: '3rd', username: data.top_wagerers.top3?.username || placeholderData.top3.username, wager: data.top_wagerers.top3?.wager || placeholderData.top3.wager, tickets: data.top_wagerers.top3?.tickets || '0', medal: '/static/3rd.png' }
+                        { place: '1st', username: data.top_wagerers.top1?.username || placeholderData.top1?.username, wager: data.top_wagerers.top1?.wager || placeholderData.top1?.wager, tickets: data.top_wagerers.top1?.tickets || '0', medal: '/static/1st.png' },
+                        { place: '2nd', username: data.top_wagerers.top2?.username || placeholderData.top2?.username, wager: data.top_wagerers.top2?.wager || placeholderData.top2?.wager, tickets: data.top_wagerers.top2?.tickets || '0', medal: '/static/2nd.png' },
+                        { place: '3rd', username: data.top_wagerers.top3?.username || placeholderData.top3?.username, wager: data.top_wagerers.top3?.wager || placeholderData.top3?.wager, tickets: data.top_wagerers.top3?.tickets || '0', medal: '/static/3rd.png' }
                     ];
 
                     top3Container.innerHTML = `
@@ -410,10 +389,12 @@
 
                     for (let i = 4; i <= 11; i++) {
                         const user = data.top_wagerers[`top${i}`] || placeholderData[`top${i}`];
-                        const div = document.createElement('div');
-                        div.classList.add('standing');
-                        div.innerHTML = `<h3>${i}th: ${user.username}</h3><p>Wager: ${user.wager}</p><p>Tickets: ${user.tickets || '0'}</p>`;
-                        standingsContainer.appendChild(div);
+                        if (user) {
+                            const div = document.createElement('div');
+                            div.classList.add('standing');
+                            div.innerHTML = `<h3>${i}th: ${user.username}</h3><p>Wager: ${user.wager}</p><p>Tickets: ${user.tickets || '0'}</p>`;
+                            standingsContainer.appendChild(div);
+                        }
                     }
                 })
                 .catch(error => console.error('Error fetching wager data:', error));
