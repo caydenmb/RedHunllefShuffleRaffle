@@ -1,1 +1,1 @@
-A wager tracking (Shuffle.com) website for the streamer redhunllef.
+A wager tracking and raffle (Shuffle.com) website for the streamer redhunllef.
