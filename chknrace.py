@@ -133,6 +133,12 @@ def serve_index():
     log_message('info', 'Serving index.html')
     return render_template('index.html')
 
+# Route to serve the entries.html template
+@app.route("/entries")
+def serve_entries():
+    log_message('info', 'Serving entries.html')
+    return render_template('entries.html')
+
 # Route for handling 404 errors (non-existent pages)
 @app.errorhandler(404)
 def page_not_found(e):
