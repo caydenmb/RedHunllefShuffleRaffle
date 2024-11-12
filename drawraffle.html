@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Raffle Draw</title>
+    
+    <!-- Google Fonts (Roboto for sleek typography) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Main Styles -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #3a3a3a;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #444;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        header img {
+            width: 225px;
+            height: auto;
+            animation: bounce 0.6s infinite ease-in-out;
+            margin-bottom: 30px;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .button {
+            padding: 15px 30px;
+            background-color: #ff2d2d;
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #cc2424;
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #winner-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff2d2d;
+            margin-top: 30px;
+        }
+
+        #scrolling-names {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff2d2d;
+            height: 50px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .scrolling-name {
+            animation: scroll 2s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateY(100%);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            color: #cccccc;
+            margin-top: 25px;
+            text-align: left;
+            max-width: 600px;
+        }
+
+        .algorithm-text {
+            font-size: 0.9rem;
+            color: #cccccc;
+            margin-top: 15px;
+            text-align: left;
+            max-width: 600px;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="/static/redlogo.png" alt="Redhunllef Logo">
+        </header>
+        <h1>Raffle Draw</h1>
+        <p>Click the button below to draw a winner!</p>
+        <div id="scrolling-names">Drawing...</div>
+        <button class="button" onclick="drawWinner()">Draw Winner</button>
+        <div id="winner-display">No winner drawn yet.</div>
+        <div class="info-text">
+            <p>The raffle draw is conducted in a fair and transparent manner. Each ticket holder has an equal chance of winning, with the odds determined by the number of tickets they hold compared to the total number of tickets available.</p>
+            <p>Participants may hold dozens, hundreds, or even thousands of tickets, depending on their contributions. Each ticket represents one chance to win, which means that having more tickets increases the likelihood of being selected, but every ticket still has an equal opportunity.</p>
+            <p>Winners are picked using a random selection process, ensuring that each ticket is treated independently. Below is an example to help illustrate:</p>
+            <ul>
+                <li><strong>Alice</strong> holds 50 tickets, <strong>Bob</strong> holds 10 tickets, and <strong>Charlie</strong> holds 1,000 tickets.</li>
+                <li>In this scenario, Alice has 50 chances, Bob has 10 chances, and Charlie has 1,000 chances. However, the selection is completely random, so any ticket can be picked regardless of the number of tickets a participant holds.</li>
+            </ul>
+            <p>To ensure fairness, the random draw is performed using a provably fair algorithm, and each winner is chosen without bias. If you have any questions regarding the raffle process, feel free to reach out for more details.</p>
+        </div>
+        <div class="algorithm-text">
+            <h3>Provably Fair Algorithm</h3>
+            <p>The raffle winner is chosen using the following algorithm:</p>
+            <pre>
+import secrets
+
+def draw_winner(tickets):
+    if not tickets:
+        return None
+    # Use a cryptographic random number generator to select the winner
+    winner_index = secrets.randbelow(len(tickets))
+    return tickets[winner_index]
+
+# Example usage:
+tickets = ["Alice"] * 50 + ["Bob"] * 10 + ["Charlie"] * 1000
+winner = draw_winner(tickets)
+print(f"The winner is: {winner}")
+            </pre>
+            <p>This Python code uses the `secrets` module, which is designed for cryptographic security, to ensure that the selection is random and unbiased. The `secrets.randbelow(len(tickets))` function generates a secure random number within the range of ticket indices, ensuring that each ticket has an equal chance of being selected.</p>
+        </div>
+    </div>
+
+    <script>
+        let names = [];
+        let scrollingInterval;
+
+        function drawWinner() {
+            // Stop any existing scrolling animation
+            clearInterval(scrollingInterval);
+
+            fetch('/get_all_names')
+                .then(response => response.json())
+                .then(data => {
+                    names = data.names;
+                    if (names.length > 0) {
+                        let index = 0;
+                        let duration = Math.random() * (7 - 4) + 4; // Random duration between 4 and 7 seconds
+                        let startSpeed = 50;
+                        let endSpeed = 300;
+                        let currentSpeed = startSpeed;
+                        let step = (endSpeed - startSpeed) / (duration * 20);
+
+                        scrollingInterval = setInterval(() => {
+                            const scrollingNamesDiv = document.getElementById('scrolling-names');
+                            scrollingNamesDiv.textContent = names[index];
+                            index = (index + 1) % names.length;
+
+                            // Gradually slow down the scrolling speed
+                            if (currentSpeed < endSpeed) {
+                                currentSpeed += step;
+                            }
+                        }, currentSpeed);
+
+                        setTimeout(() => {
+                            clearInterval(scrollingInterval);
+                            fetch('/draw_winner')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const winnerDisplay = document.getElementById('winner-display');
+                                    if (data.winner) {
+                                        winnerDisplay.textContent = `Winner: ${data.winner}`;
+                                    } else {
+                                        winnerDisplay.textContent = 'No tickets available for drawing.';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error drawing winner:', error);
+                                    document.getElementById('winner-display').textContent = 'An error occurred while drawing the winner.';
+                                });
+                        }, duration * 1000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching names:', error);
+                    document.getElementById('scrolling-names').textContent = 'Error loading names.';
+                });
+        }
+
+        // Start scrolling names on page load
+        window.onload = startScrollingNames;
+
+        function startScrollingNames() {
+            fetch('/get_all_names')
+                .then(response => response.json())
+                .then(data => {
+                    names = data.names;
+                    if (names.length > 0) {
+                        let index = 0;
+                        scrollingInterval = setInterval(() => {
+                            const scrollingNamesDiv = document.getElementById('scrolling-names');
+                            scrollingNamesDiv.textContent = names[index];
+                            index = (index + 1) % names.length;
+                        }, 100);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching names:', error);
+                    document.getElementById('scrolling-names').textContent = 'Error loading names.';
+                });
+        }
+    </script>
+</body>
+</html>
