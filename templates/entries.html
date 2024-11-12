@@ -34,12 +34,13 @@
         #entries-list {
             width: 100%;
             max-width: 800px;
+            max-height: 400px; /* Limit height for scrolling */
             margin-bottom: 30px;
             padding: 20px;
             background-color: #444;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-            overflow: auto;
+            overflow-y: auto; /* Enable vertical scroll */
         }
 
         .buttons-container {
@@ -71,6 +72,7 @@
         }
 
         #entries-textarea {
+            display: none; /* Hide the white box at the bottom */
             width: 100%;
             max-width: 800px;
             height: 150px;
@@ -86,12 +88,12 @@
 <body>
     <h1>Entries List</h1>
 
-    <div id="entries-list"></div>
-
     <div class="buttons-container">
         <button class="button" onclick="randomizeEntries()">Randomize</button>
         <button class="button" onclick="copyEntries()">Copy All</button>
     </div>
+
+    <div id="entries-list"></div>
 
     <textarea id="entries-textarea" readonly></textarea>
 
