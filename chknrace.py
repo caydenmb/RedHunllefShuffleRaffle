@@ -5,8 +5,7 @@ from flask import Flask, jsonify, render_template
 from datetime import datetime
 import os
 import threading
-from flask_cors import CORS, cross_origin
-import random
+from flask_cors import CORS
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -116,26 +115,6 @@ def update_placeholder_data():
     except Exception as e:
         log_message('error', f"An error occurred while updating placeholder data: {e}")
 
-# Route to serve the ticket entries page
-@app.route("/entries")
-@cross_origin()
-def get_ticket_entries():
-    log_message('info', 'Generating ticket entries list.')
-    try:
-        if 'top_wagerers' in data_cache:
-            ticket_entries = []
-            for user in data_cache['top_wagerers'].values():
-                tickets = int(user['tickets'].replace(',', ''))
-                ticket_entries.extend([user['username']] * tickets)
-            log_message('debug', f"Ticket entries being returned: {ticket_entries}")  # Log ticket entries
-            return render_template('entries.html', entries=ticket_entries)
-        else:
-            log_message('warning', 'No ticket data available.')
-            return render_template('entries.html', entries=[])
-    except Exception as e:
-        log_message('error', f"Exception occurred while generating ticket entries: {e}")
-        return render_template('entries.html', entries=[])
-
 # Schedule data fetching every 5 minutes
 def schedule_data_fetch():
     log_message('info', 'Fetching data every 1.5 minutes.')
@@ -148,7 +127,7 @@ def get_data():
     log_message('info', 'Serving cached data to a client')
     return jsonify(data_cache)
 
-# Route to serve index.html template
+# Route to serve the index.html template
 @app.route("/")
 def serve_index():
     log_message('info', 'Serving index.html')
@@ -158,7 +137,7 @@ def serve_index():
 @app.errorhandler(404)
 def page_not_found(e):
     log_message('warning', '404 error: Page not found.')
-    return "Page not found", 404
+    return render_template('404.html'), 404
 
 # Start the data fetching thread
 schedule_data_fetch()
