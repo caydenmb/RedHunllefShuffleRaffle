@@ -6,7 +6,6 @@ from datetime import datetime
 import os
 import threading
 from flask_cors import CORS
-import secrets
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -23,9 +22,6 @@ start_time = 1731312060  # Nov. 11 00:01 Pacific Time, 2024, in seconds
 
 # Data cache for storing fetched data
 data_cache = {}
-
-# Sample data representing the tickets held by participants
-tickets = ["Alice", "Bob", "Charlie", "Dave"]
 
 # Function to log detailed output
 def log_message(level, message):
@@ -129,24 +125,13 @@ def schedule_data_fetch():
 @app.route("/data")
 def get_data():
     log_message('info', 'Serving cached data to a client')
-    # Generate list of participants with each ticket represented individually
-    ticket_list = []
-    if "top_wagerers" in data_cache:
-        for wagerer in data_cache["top_wagerers"].values():
-            ticket_list.extend([wagerer["username"]] * int(wagerer["tickets"].replace(",", "")))
-    return jsonify(ticket_list)
+    return jsonify(data_cache)
 
 # Route to serve the index.html template
 @app.route("/")
 def serve_index():
     log_message('info', 'Serving index.html')
     return render_template('index.html')
-
-# Route to serve the drawraffle.html template
-@app.route("/drawraffle")
-def serve_drawraffle():
-    log_message('info', 'Serving drawraffle.html')
-    return render_template('drawraffle.html')
 
 # Route for handling 404 errors (non-existent pages)
 @app.errorhandler(404)
