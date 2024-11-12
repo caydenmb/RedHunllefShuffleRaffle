@@ -109,8 +109,7 @@
             <img src="/static/redlogo.png" alt="Redhunllef Logo">
         </header>
         <h1>Raffle Participants Export</h1>
-        <p>Click the button below to generate a copyable list of participants, with each user's name repeated according to their ticket count. You can also randomize the list for added fairness.</p>
-        <button class="button" onclick="exportParticipants()">Export Participants</button>
+        <p>The list below shows each participant, with their name repeated according to their ticket count. You can also randomize the list for added fairness and copy it to use elsewhere.</p>
         <button class="button" onclick="randomizeParticipants()">Randomize List</button>
         <div id="output">
             No data generated yet.
@@ -130,7 +129,7 @@
                         participants = [];
                         for (const key in topWagerers) {
                             const user = topWagerers[key];
-                            for (let i = 0; i < user.tickets; i++) {
+                            for (let i = 0; i < parseInt(user.tickets.replace(/,/g, '')); i++) {
                                 participants.push(user.username);
                             }
                         }
@@ -148,7 +147,7 @@
 
         function randomizeParticipants() {
             if (participants.length === 0) {
-                document.getElementById('output').textContent = 'No data available to randomize. Please export participants first.';
+                document.getElementById('output').textContent = 'No data available to randomize. Please refresh the page.';
                 return;
             }
             for (let i = participants.length - 1; i > 0; i--) {
