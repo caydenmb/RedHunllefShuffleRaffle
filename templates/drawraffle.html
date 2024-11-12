@@ -125,16 +125,20 @@
             fetch('/data')
                 .then(response => response.json())
                 .then(data => {
-                    const topWagerers = data.top_wagerers;
-                    participants = [];
-                    for (const key in topWagerers) {
-                        const user = topWagerers[key];
-                        for (let i = 0; i < user.tickets; i++) {
-                            participants.push(user.username);
+                    if (data && data.top_wagerers) {
+                        const topWagerers = data.top_wagerers;
+                        participants = [];
+                        for (const key in topWagerers) {
+                            const user = topWagerers[key];
+                            for (let i = 0; i < user.tickets; i++) {
+                                participants.push(user.username);
+                            }
                         }
+                        document.getElementById('output').textContent = participants.join('\n');
+                        document.getElementById('copy-button').style.display = 'block';
+                    } else {
+                        throw new Error('Invalid data format');
                     }
-                    document.getElementById('output').textContent = participants.join('\n');
-                    document.getElementById('copy-button').style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error fetching participant data:', error);
@@ -163,6 +167,9 @@
                 console.error('Error copying to clipboard:', err);
             });
         }
+
+        // Automatically fetch participants when the page loads
+        window.onload = exportParticipants;
     </script>
 </body>
 </html>
