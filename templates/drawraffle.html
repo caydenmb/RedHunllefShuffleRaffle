@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Raffle Draw</title>
+    <title>Export Raffle Participants</title>
     
     <!-- Google Fonts (Roboto for sleek typography) -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -69,53 +69,17 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        #winner-display {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff2d2d;
+        #output {
             margin-top: 30px;
-        }
-
-        #scrolling-names {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff2d2d;
-            height: 50px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .scrolling-name {
-            animation: scroll 2s linear infinite;
-        }
-
-        @keyframes scroll {
-            0% {
-                transform: translateY(100%);
-            }
-            100% {
-                transform: translateY(-100%);
-            }
-        }
-
-        .info-text {
-            font-size: 0.9rem;
-            color: #cccccc;
-            margin-top: 25px;
-            text-align: left;
-            max-width: 600px;
-        }
-
-        .algorithm-text {
-            font-size: 0.9rem;
-            color: #cccccc;
-            margin-top: 15px;
-            text-align: left;
-            max-width: 600px;
             background-color: #333;
+            color: #f0f0f0;
             padding: 15px;
             border-radius: 5px;
-            overflow-x: auto;
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -124,135 +88,46 @@
         <header>
             <img src="/static/redlogo.png" alt="Redhunllef Logo">
         </header>
-        <h1>Raffle Draw</h1>
-        <p>Click the button below to draw a winner!</p>
-        <div id="scrolling-names">Drawing...</div>
-        <button class="button" onclick="drawWinner()">Draw Winner</button>
-        <div id="winner-display">No winner drawn yet.</div>
-        <div class="info-text">
-            <p>The raffle draw is conducted in a fair and transparent manner. Each ticket holder has an equal chance of winning, with the odds determined by the number of tickets they hold compared to the total number of tickets available.</p>
-            <p>Participants may hold dozens, hundreds, or even thousands of tickets, depending on their contributions. Each ticket represents one chance to win, which means that having more tickets increases the likelihood of being selected, but every ticket still has an equal opportunity.</p>
-            <p>Winners are picked using a random selection process, ensuring that each ticket is treated independently. Below is an example to help illustrate:</p>
-            <ul>
-                <li>The names and ticket counts are directly pulled from the real data managed by the raffle system backend, ensuring that the odds are fair and accurate for each participant.</li>
-            </ul>
-            <p>To ensure fairness, the random draw is performed using a provably fair algorithm, and each winner is chosen without bias. If you have any questions regarding the raffle process, feel free to reach out for more details.</p>
-        </div>
-        <div class="algorithm-text">
-            <h3>Provably Fair Algorithm</h3>
-            <p>The raffle winner is chosen using the following algorithm:</p>
-            <pre>
-import secrets
-
-def draw_winner(tickets):
-    if not tickets:
-        return None
-    # Use a cryptographic random number generator to select the winner
-    winner_index = secrets.randbelow(len(tickets))
-    return tickets[winner_index]
-
-# Example usage:
-tickets = [entry['username']] * entry['tickets'] for entry in data_cache['top_wagerers'].values()
-winner = draw_winner(tickets)
-print(f"The winner is: {winner}")
-            </pre>
-            <p>This Python code uses the `secrets` module, which is designed for cryptographic security, to ensure that the selection is random and unbiased. The `secrets.randbelow(len(tickets))` function generates a secure random number within the range of ticket indices, ensuring that each ticket has an equal chance of being selected.</p>
-        </div>
+        <h1>Raffle Participants Export</h1>
+        <p>Click the button below to generate a copyable list of participants, with each user's name repeated according to their ticket count. You can also randomize the list for added fairness.</p>
+        <button class="button" onclick="exportParticipants()">Export Participants</button>
+        <button class="button" onclick="randomizeParticipants()">Randomize List</button>
+        <div id="output">No data generated yet.</div>
     </div>
 
     <script>
-        let names = [];
-        let scrollingInterval;
+        let participants = [];
 
-        function drawWinner() {
-            // Stop any existing scrolling animation
-            clearInterval(scrollingInterval);
-
+        function exportParticipants() {
             fetch('/data')
                 .then(response => response.json())
                 .then(data => {
                     const topWagerers = data.top_wagerers;
-                    names = [];
+                    participants = [];
                     for (const key in topWagerers) {
                         const user = topWagerers[key];
                         for (let i = 0; i < user.tickets; i++) {
-                            names.push(user.username);
+                            participants.push(user.username);
                         }
                     }
-
-                    if (names.length > 0) {
-                        let index = 0;
-                        let duration = Math.random() * (7 - 4) + 4; // Random duration between 4 and 7 seconds
-                        let startSpeed = 50;
-                        let endSpeed = 300;
-                        let currentSpeed = startSpeed;
-                        let step = (endSpeed - startSpeed) / (duration * 20);
-
-                        scrollingInterval = setInterval(() => {
-                            const scrollingNamesDiv = document.getElementById('scrolling-names');
-                            scrollingNamesDiv.textContent = names[index];
-                            index = (index + 1) % names.length;
-
-                            // Gradually slow down the scrolling speed
-                            if (currentSpeed < endSpeed) {
-                                currentSpeed += step;
-                            }
-                        }, currentSpeed);
-
-                        setTimeout(() => {
-                            clearInterval(scrollingInterval);
-                            fetch('/draw_winner')
-                                .then(response => response.json())
-                                .then(data => {
-                                    const winnerDisplay = document.getElementById('winner-display');
-                                    if (data.winner) {
-                                        winnerDisplay.textContent = `Winner: ${data.winner}`;
-                                    } else {
-                                        winnerDisplay.textContent = 'No tickets available for drawing.';
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error drawing winner:', error);
-                                    document.getElementById('winner-display').textContent = 'An error occurred while drawing the winner.';
-                                });
-                        }, duration * 1000);
-                    }
+                    document.getElementById('output').textContent = participants.join('\n');
                 })
                 .catch(error => {
-                    console.error('Error fetching names:', error);
-                    document.getElementById('scrolling-names').textContent = 'Error loading names.';
+                    console.error('Error fetching participant data:', error);
+                    document.getElementById('output').textContent = 'Error loading participant data.';
                 });
         }
 
-        // Start scrolling names on page load
-        window.onload = startScrollingNames;
-
-        function startScrollingNames() {
-            fetch('/data')
-                .then(response => response.json())
-                .then(data => {
-                    const topWagerers = data.top_wagerers;
-                    names = [];
-                    for (const key in topWagerers) {
-                        const user = topWagerers[key];
-                        for (let i = 0; i < user.tickets; i++) {
-                            names.push(user.username);
-                        }
-                    }
-
-                    if (names.length > 0) {
-                        let index = 0;
-                        scrollingInterval = setInterval(() => {
-                            const scrollingNamesDiv = document.getElementById('scrolling-names');
-                            scrollingNamesDiv.textContent = names[index];
-                            index = (index + 1) % names.length;
-                        }, 100);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching names:', error);
-                    document.getElementById('scrolling-names').textContent = 'Error loading names.';
-                });
+        function randomizeParticipants() {
+            if (participants.length === 0) {
+                document.getElementById('output').textContent = 'No data available to randomize. Please export participants first.';
+                return;
+            }
+            for (let i = participants.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [participants[i], participants[j]] = [participants[j], participants[i]];
+            }
+            document.getElementById('output').textContent = participants.join('\n');
         }
     </script>
 </body>
