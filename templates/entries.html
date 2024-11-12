@@ -24,6 +24,8 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            height: 100vh;
+            overflow: hidden; /* Prevent page from scrolling */
         }
 
         h1 {
@@ -34,13 +36,13 @@
         #entries-list {
             width: 100%;
             max-width: 800px;
-            max-height: 400px; /* Limit height for scrolling */
             margin-bottom: 30px;
             padding: 20px;
             background-color: #444;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-            overflow-y: auto; /* Enable vertical scroll */
+            overflow-y: auto;
+            max-height: 70vh; /* Default max-height to fit most screens */
         }
 
         .buttons-container {
@@ -73,15 +75,6 @@
 
         #entries-textarea {
             display: none; /* Hide the white box at the bottom */
-            width: 100%;
-            max-width: 800px;
-            height: 150px;
-            margin-top: 20px;
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 5px;
-            border: none;
-            resize: none;
         }
     </style>
 </head>
@@ -98,6 +91,22 @@
     <textarea id="entries-textarea" readonly></textarea>
 
     <script>
+        // Adjust the entries list height based on viewport size
+        function adjustEntriesListHeight() {
+            const headerHeight = document.querySelector('h1').offsetHeight;
+            const buttonsHeight = document.querySelector('.buttons-container').offsetHeight;
+            const padding = 60; // Additional padding for spacing
+            const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding;
+            document.getElementById('entries-list').style.maxHeight = `${availableHeight}px`;
+        }
+
+        // Run the adjustment on load and resize
+        window.onload = function() {
+            fetchEntries();
+            adjustEntriesListHeight();
+        };
+        window.onresize = adjustEntriesListHeight;
+
         // Fetch data from /data endpoint and populate entries list
         function fetchEntries() {
             fetch('/data')
@@ -159,9 +168,6 @@
             document.execCommand('copy');
             alert('Entries copied to clipboard!');
         }
-
-        // Fetch entries when the page loads
-        window.onload = fetchEntries;
     </script>
 </body>
 </html>
